@@ -6730,13 +6730,21 @@ pub const Keybinds = struct {
                 alloc,
                 .{ .key = .{ .unicode = 'c' }, .mods = mods },
                 .{ .copy_to_clipboard = .mixed },
-                .{ .performable = true },
+                .{
+                    // On macOS we keep this not performable so that
+                    // keybindTrigger exposes it to the native Edit menu (Copy/Paste).
+                    // See comment below with the numeric goto_tab for more context.
+                    .performable = !builtin.target.os.tag.isDarwin(),
+                },
             );
             try self.set.putFlags(
                 alloc,
                 .{ .key = .{ .unicode = 'v' }, .mods = mods },
                 .paste_from_clipboard,
-                .{ .performable = true },
+                .{
+                    // See comment above with the copy_to_clipboard
+                    .performable = !builtin.target.os.tag.isDarwin(),
+                },
             );
         }
 
